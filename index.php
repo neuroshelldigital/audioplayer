@@ -1,13 +1,14 @@
-
-<!DOCTYPE html>	
+<?php
+DEFINE('BASEURL','http://www.btrtoday.com/btrtoday/');
+?><!DOCTYPE html>	
 <html>
 	<head>
 		<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 	   <link href="//fonts.googleapis.com/css?family=Lato:400|Questrial:400" rel="stylesheet" type="text/css">
-	   <link rel="stylesheet" href="http://www.btrtoday.com/btrtoday/css/normalize.css">
-	   <link rel="stylesheet" href="http://www.btrtoday.com/btrtoday/css/main.css">		
+	   <link rel="stylesheet" href="<?php echo BASEURL;?>css/normalize.css">
+	   <link rel="stylesheet" href="<?php echo BASEURL;?>css/main.css">		
 
-	   <script src="http://www.btrtoday.com/btrtoday/js/vendor/modernizr-2.6.2.min.js"></script>
+	   <script src="<?php echo BASEURL;?>js/vendor/modernizr-2.6.2.min.js"></script>
 		<style>
 			#info-progress {
 				width:620px;
@@ -213,6 +214,9 @@
 				background-position: 0 -80px;
 			}
 
+			div#pop-out {
+				background-position: 0 -120px;
+			}
 
 			#subscribe-container {
 				width:300px; height:123px;
@@ -328,6 +332,12 @@
 				var trackOn=0;
 
 				$('#host-image').css("background", "#666666 url(" + d.player_image + ") center no-repeat");
+                $("#ep-info .title a").text(d.title);
+                $("#ep-info .info .premdate").text(d.premiere_date);
+                $("#ep-info .info .series-link").attr("href",d.baseurl + "listen/" + d.series_slug);
+                $("#ep-info .info .genre").attr("href",d.baseurl + "listen/" + d.genre_slug);
+                $("#ep-info .info .genre").text(d.genre);
+				
 				var fbShare= encodeURI('http://www.facebook.com/sharer.php?u=' + d.shareurl + '&t=' + d.title + '&ret=login&display=popup');
 
 				var googleShare=encodeURI('https://plus.google.com/share?url=' + d.shareurl);
@@ -360,6 +370,7 @@
 
 				//deep link offset and url autoplay
 				player.bind('canplay', function(){
+					console.log("echo");
 					if(utils.getParameterByName('t') && !playTimeOffset) {
 				  		player.prop('currentTime', (utils.getParameterByName('t')));
 				  		playTimeOffset=true;
@@ -466,7 +477,7 @@
 				$('#continuous-play').unbind().click(function(){
 					$(this).toggleClass('highlight');					
 				});
-
+			
 				$('#list-next').unbind().click(function() {
 					if(requestRunning) return;
 					player.trigger('pause');
@@ -492,6 +503,16 @@
 
 				$('#subscribe-container a').attr('href', 'itpc://breakthruradio.com/xml/podcast.php?dj_id=' + d.blog_id);
 				$('#subscribe-container .subscribe-paste').text('http://breakthruradio.com/xml/podcast.php?dj_id=' + d.blog_id);
+				
+				$('#pop-out').unbind().click(function(){
+					player.trigger('pause');
+					url = location.protocol + '//' + location.host + location.pathname +
+					      "?blog_id=" + utils.getParameterByName('blog_id') +
+						  "&post_id=" + utils.getParameterByName('post_id') +
+						  "&t=" + player.prop('currentTime') +
+						  "&playshow"
+					win = window.open(url,'player','location=no,menubar=no,titlebar=no,width=940,height=168,top=150,left=150');
+				});
 			}
 
         	function playList (blogId, postId) {
@@ -507,12 +528,12 @@
 	        	});
         	}
 
-        	playList(64,3231); //replace with call from lower page
+        	playList($("body").attr('data-blog-id'),$("body").attr('data-post-id')); //replace with call from lower page
 		});
 		</script>
 
 	</head>
-	<body class="btr-listen btr-playlist">
+	<body class="btr-listen btr-playlist" data-baseurl='<?php echo BASEURL;?>' data-blog-id="<?php echo $_GET['blog_id'];?>" data-post-id="<?php echo $_GET['post_id'];?>">
 		<div class="content playlist-page" data-date="" data-offset="">
 			<div id="audio-player" class="clearfix">
 				<div id="subscribe-container" class="clearfix">
@@ -533,8 +554,8 @@
 				<div id="info-progress" class="clearfix">
 					
 					<div id="ep-info" class="text-box">
-						<div class="title">Episode // <a href="javascript:void(0)">Sophie B. Hawkins</a></div>
-						<div class="info">Premiere Date: <span class="premdate">Jun 5, 2015</span>&nbsp;|&nbsp;<a href="javascript:void(0)">Series Info</a>&nbsp;//&nbsp;Genre: <a href="javascript:void(0)">Music</a>&nbsp;|&nbsp;Sponsor: <a href="javascript:void(0)">Nikon</a></div>
+						<div class="title">Episode // <a href="javascript:void(0)"></a></div>
+						<div class="info">Premiere Date: <span class="premdate">J</span>&nbsp;|&nbsp;<a class="series-link" href="javascript:void(0)" target="_top">Series Info</a>&nbsp;//&nbsp;Genre: <a class="genre" href="javascript:void(0)" target="_top"></a>&nbsp;|&nbsp;Sponsor: <a href="javascript:void(0)">Nikon</a></div>
 					</div>
 
 					<div id="transport" class="clearfix">
@@ -569,17 +590,19 @@
 						 	<a href="javascript://" class="mail" target="_blank"></a>
 
 						 </span></div>
+						 <div id="pop-out"></div>
 					</div>
 				</div>
 			</div>
-
+<!--
 			<div id="sponsor-image" style="margin-top:22px;">
-		        <a href="http://www.diesel.com/home.php" target="_blank"><img src="http://www.btrtoday.com/btrtoday/img/fpo-advertisement-940.png"></a>
+		        <a href="http://www.diesel.com/home.php" target="_blank"><img src="<?php echo BASEURL;?>img/fpo-advertisement-940.png"></a>
 		    </div>
+-->
 		</div>
 
-		<script src="http://www.btrtoday.com/btrtoday/js/plugins.js"></script>
-        <script src="http://www.btrtoday.com/btrtoday/js/main.js"></script>
+		<script src="<?php echo BASEURL;?>js/plugins.js"></script>
+        <script src="<?php echo BASEURL;?>js/main.js"></script>
 
 	</body>
 </html>
